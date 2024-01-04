@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JToolBar;
+import javax.swing.ListModel;
 import javax.swing.JInternalFrame;
 import java.awt.BorderLayout;
 import javax.swing.JTabbedPane;
@@ -23,6 +24,9 @@ import java.awt.Font;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
+
+import controleur.CProjet;
+
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JRadioButton;
@@ -36,12 +40,16 @@ import javax.swing.JScrollPane;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.JList;
 import java.awt.CardLayout;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 
 public class Central extends JFrame {
 
@@ -56,6 +64,9 @@ public class Central extends JFrame {
 	private JTextField IDS;
 	private JTextField TR;
 	private JTextField R;
+	public void setListProjet(JList<String> listProjet) {
+		this.listProjet = listProjet;
+	}
 	private JTextField montantpret;
 	private JTable table;
 	private JTextField c11;
@@ -66,7 +77,12 @@ public class Central extends JFrame {
 	private JTextField c3;
 	private JTable table_1;
 	private JTable table_2;
+	private JList<String> listProjet;
+	private CProjet ctrl;
 
+	public JList<String> getListProjet() {
+		return listProjet;
+	}
 	/**
 	 * Launch the application.
 	 */
@@ -275,6 +291,7 @@ public class Central extends JFrame {
 		}
 	}
 	public Central() {
+		ctrl = new CProjet(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 907, 570);
 		contentPane = new JPanel();
@@ -1035,13 +1052,16 @@ public class Central extends JFrame {
 		JPanel panel_28 = new JPanel();
 		panel_27.add(panel_28, BorderLayout.SOUTH);
 		
-		JButton btnNewButton_2 = new JButton("New button");
+		JButton btnNewButton_2 = new JButton("Nouveau projet");
+		btnNewButton_2.addActionListener(ctrl);
 		panel_28.add(btnNewButton_2);
 		
-		JButton btnNewButton_1 = new JButton("New button");
+		JButton btnNewButton_1 = new JButton("Supprimer projet");
+		btnNewButton_1.addActionListener(ctrl);
 		panel_28.add(btnNewButton_1);
 		
-		JButton btnNewButton = new JButton("New button");
+		JButton btnNewButton = new JButton("Editer projet");
+		btnNewButton.addActionListener(ctrl);
 		panel_28.add(btnNewButton);
 		
 		JPanel panel_33 = new JPanel();
@@ -1057,8 +1077,10 @@ public class Central extends JFrame {
 		scrollPane_1.setViewportView(panel_34);
 		panel_34.setLayout(new CardLayout(0, 0));
 		
-		JList list = new JList();
-		panel_34.add(list, "name_804636888798500");
+		
+		listProjet = new JList<String>();
+		listProjet.addListSelectionListener(ctrl);
+		panel_34.add(listProjet, "name_804636888798500");
 		
 		JLabel lblNewLabel_12 = new JLabel("M Calculator");
 		lblNewLabel_12.setHorizontalAlignment(SwingConstants.CENTER);
