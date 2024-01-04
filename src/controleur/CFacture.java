@@ -11,6 +11,9 @@ import engine.Compte;
 import engine.DateP;
 import engine.EFacture;
 import engine.Paiement;
+import interfesse.EntrepriseInvalide;
+import interfesse.ErreurDate;
+import interfesse.ErreurFacture;
 import interfesse.Facture;
 
 public class CFacture implements ActionListener{
@@ -43,16 +46,13 @@ public class CFacture implements ActionListener{
 			}
 			if (b.getText().equals("Valider")) {
 				if (vue.getNomFacture().getText().isEmpty()) {
-					System.out.println("facture vide");
-					//TODO fenêtre erreur nom facture
+					ErreurFacture.main(null);
 				} 
 				else if (vue.getDoit().getSelectedItem().equals("Autre")&&vue.getEntreprise().getText().isEmpty()) {
-					//TODO fenêtre erreur choix entreprise 
-					System.out.println("entreprise vide");
+					EntrepriseInvalide.main(null);
 				} 
 				else if (!DateP.getLinkedDate(vue.getDate().getText()).isDateValide()) {
-					//TODO fenêtre date invalide
-					System.out.println("date vide");
+					ErreurDate.main(null);
 				} 
 				else {
 					String doit ="";

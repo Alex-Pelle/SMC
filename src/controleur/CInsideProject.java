@@ -14,6 +14,7 @@ import javax.swing.event.ListSelectionListener;
 import engine.EFacture;
 import engine.EProjet;
 import interfesse.Facture;
+import interfesse.PopupDeleteFacture;
 import interfesse.PopupDeleteProject;
 import interfesse.ProjectInit;
 import interfesse.Projet;
@@ -50,7 +51,7 @@ public class CInsideProject implements ActionListener , ListSelectionListener {
 			Facture.main(this);
 		}
 		if(b.getText().equals("Supprimer facture") && this.nomFactureSelectionne!=null) {
-			//PopupDeleteProject.main();
+			PopupDeleteFacture.main(this, nomFactureSelectionne);
 		} 
 		if(b.getText().equals("Editer facture") && this.nomFactureSelectionne!=null) {
 			//Projet.main();
