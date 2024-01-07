@@ -23,6 +23,8 @@ import javax.swing.JList;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 
 public class Projet extends JFrame {
 
@@ -93,6 +95,7 @@ public class Projet extends JFrame {
 		panel.add(btnNewButton_2, gbc_btnNewButton_2);
 		
 		JButton btnNewButton_4 = new JButton("Editer facture");
+		btnNewButton_4.addActionListener(ctrl);
 		GridBagConstraints gbc_btnNewButton_4 = new GridBagConstraints();
 		gbc_btnNewButton_4.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnNewButton_4.insets = new Insets(0, 0, 5, 0);
@@ -114,6 +117,7 @@ public class Projet extends JFrame {
 		panel.add(btnNewButton, gbc_btnNewButton);
 		
 		JButton btnNewButton_3 = new JButton("Fermer");
+		btnNewButton_3.addActionListener(ctrl);
 		GridBagConstraints gbc_btnNewButton_3 = new GridBagConstraints();
 		gbc_btnNewButton_3.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnNewButton_3.gridx = 0;
@@ -121,7 +125,10 @@ public class Projet extends JFrame {
 		panel.add(btnNewButton_3, gbc_btnNewButton_3);
 		
 		factures = new JList<String>();
+		factures.addListSelectionListener(ctrl);
 		scrollPane.setViewportView(factures);
+
+		this.ctrl.updateList();
 	}
 
 	public JList<String> getFactures() {

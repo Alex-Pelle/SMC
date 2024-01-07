@@ -2,6 +2,7 @@ package controleur;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Optional;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -20,10 +21,36 @@ public class CFacture implements ActionListener{
 
 	private CInsideProject c;
 	private Facture vue;
+	private Optional<String> nomFacture;
 	
-	public CFacture(CInsideProject c,Facture vue) {
+	public CFacture(CInsideProject c,Facture vue, Optional<String> nomFacture) {
 		this.c=c;
 		this.vue=vue;
+		this.nomFacture=nomFacture;
+	}
+	
+	public void editer() {
+		if(nomFacture.isPresent()) {
+			EFacture f = c.getFacture(nomFacture.get());
+			vue.getNomFacture().setText(f.getNom());
+			vue.getNomFacture().setEnabled(false);
+			if(f.getDoit()!=c.getP().getEntrepriseBase()) {
+				vue.getDoit().setSelectedItem("Autre");
+				vue.getEntreprise().setEnabled(true);
+				vue.getEntreprise().setText(f.getDoit());
+			} else {
+				vue.getDoit().setSelectedItem(f.getDoit());
+				vue.getEntreprise().setEnabled(false);
+			}
+			vue.getComptes().setSelectedItem(f.getCompteSortie().name());
+			vue.getDate().setText(f.getDate());
+			vue.getQte().setValue(f.getQuantite());
+			vue.getPrix().setValue(f.getPrix());
+			vue.getRemise().setValue(f.getRemise());
+			vue.getRabais().setValue(f.getRabais());
+			vue.getRistourne().setValue(f.getRistourne());
+			vue.getPaiements().setSelectedItem(f.getPaiment().name());
+		}
 	}
 	
 	@Override
@@ -62,6 +89,7 @@ public class CFacture implements ActionListener{
 						doit = vue.getEntreprise().getText();
 					}
 					c.addFacture(new EFacture(
+							c.getP(),
 							vue.getNomFacture().getText(),
 							Compte.valueOf((String)vue.getComptes().getSelectedItem()),
 							vue.getDate().getText(),
@@ -72,6 +100,9 @@ public class CFacture implements ActionListener{
 							(Float)vue.getPrix().getValue(),
 							(Integer)vue.getQte().getValue(),
 							Paiement.valueOf((String)vue.getPaiements().getSelectedItem())));
+					if (nomFacture.isPresent()) {
+						c.delFacture(nomFacture.get());
+					}
 					c.updateList();
 					vue.dispose();
 				}

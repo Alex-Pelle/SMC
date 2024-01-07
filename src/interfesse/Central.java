@@ -1081,6 +1081,8 @@ public class Central extends JFrame {
 		listProjet = new JList<String>();
 		listProjet.addListSelectionListener(ctrl);
 		panel_34.add(listProjet, "name_804636888798500");
+		ctrl.updateList();
+		
 		
 		JLabel lblNewLabel_12 = new JLabel("M Calculator");
 		lblNewLabel_12.setHorizontalAlignment(SwingConstants.CENTER);

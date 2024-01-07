@@ -6,9 +6,14 @@ public class EFacture {
 
 	private Compte compteSortie;
 	private Compte compteEntree;
-	private Float prixTTC;
 	private String doit;
 	private String date;
+	private Float remise;
+	private Float rabais;
+	private Float ristourne;
+	private Float prix;
+	private Integer quantite;
+	private EProjet projetReferant;
 	
 	public String getDate() {
 		return date;
@@ -18,40 +23,22 @@ public class EFacture {
 	private String nom;
 	
 
-	public EFacture(String nom,Compte compte, String date, String doit, Float remise, Float rabais, Float ristourne, Float prix, Integer quantite, Paiement paiement) {
+	public EFacture(EProjet projetReferant,String nom,Compte compte, String date, String doit, Float remise, Float rabais, Float ristourne, Float prix, Integer quantite, Paiement paiement) {
+		this.projetReferant=projetReferant;
+		this.remise=remise;
+		this.ristourne=ristourne;
+		this.rabais=rabais;
+		this.prix=prix;
+		this.quantite=quantite;
 		this.nom=nom;
 		this.compteSortie=compte;
 		this.date=date;
 		this.doit=doit;
-		
-		this.prixTTC = prix*quantite;
-		this.prixTTC -= (this.prixTTC*remise/100);
-		this.prixTTC -= (this.prixTTC*rabais/100);
-		this.prixTTC -= (this.prixTTC*ristourne/100);
-		this.prixTTC /= 1.2F;
-		
 		this.paiment=paiement;
 		
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(compteEntree, compteSortie, date, doit, nom, paiment, prixTTC);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		EFacture other = (EFacture) obj;
-		return compteEntree == other.compteEntree && compteSortie == other.compteSortie
-				&& Objects.equals(date, other.date) && Objects.equals(doit, other.doit)
-				&& Objects.equals(nom, other.nom) && paiment == other.paiment && Objects.equals(prixTTC, other.prixTTC);
-	}
+	
 
 	public Compte getCompteEntree() {
 		return compteEntree;
@@ -66,14 +53,17 @@ public class EFacture {
 	}
 
 	public Float getPrixTTC() {
+		Float prixTTC = this.prix*this.quantite;
+		prixTTC -= (prixTTC*this.remise/100);
+		prixTTC -= (prixTTC*this.rabais/100);
+		prixTTC -= (prixTTC*this.ristourne/100);
+		prixTTC *= 1.2F;
 		return prixTTC;
 	}
 
 	public String getDoit() {
 		return doit;
 	}
-
-	
 
 	public Paiement getPaiment() {
 		return paiment;
@@ -82,4 +72,45 @@ public class EFacture {
 	public String getNom() {
 		return nom;
 	}
+
+	public Float getRemise() {
+		return remise;
+	}
+
+	public Float getRabais() {
+		return rabais;
+	}
+
+	public Float getRistourne() {
+		return ristourne;
+	}
+
+	public Float getPrix() {
+		return prix;
+	}
+
+	public Integer getQuantite() {
+		return quantite;
+	}
+
+
+
+	public EProjet getProjetReferant() {
+		return projetReferant;
+	}
+
+
+
+	@Override
+	public String toString() {
+		return "EFacture [compteSortie=" + compteSortie + ", compteEntree=" + compteEntree + ", doit=" + doit
+				+ ", date=" + date + ", remise=" + remise + ", rabais=" + rabais + ", ristourne=" + ristourne
+				+ ", prix=" + prix + ", quantite=" + quantite + ", projetReferant=" + projetReferant + ", paiment="
+				+ paiment + ", nom=" + nom + "]";
+	}
+
+
+
+	
+
 }

@@ -1,17 +1,32 @@
 package engine;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Objects;
+
+import DAO.Connexion;
+import DAO.DaoProjet;
 
 public class EProjet {
 
+	private Integer idProjet;
 	private String nom;
 	private String entrepriseBase;
 	private LinkedList<EFacture> factures = new LinkedList<>();
 	
-	public EProjet(String nom, String entrepriseBase) {
+	public EProjet(String nom, String entrepriseBase) throws SQLException {
+		this(new DaoProjet(Connexion.getConnexion()).getLastId(),nom,entrepriseBase);
+	}
+	
+	private EProjet(Integer id,String nom, String entrepriseBase) {
 		this.nom = nom;
 		this.entrepriseBase = entrepriseBase;
+		if (id==null) {
+			this.idProjet=0;
+		} else {
+			this.idProjet = id+1;
+		}
 	}
 
 	public String getNom() {
@@ -68,5 +83,30 @@ public class EProjet {
 		default:
 			break;
 		}
+	}
+
+	public Integer getIdProjet() {
+		return idProjet;
+	}
+
+	public void setIdProjet(Integer idProjet) {
+		this.idProjet = idProjet;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(entrepriseBase, nom);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EProjet other = (EProjet) obj;
+		return Objects.equals(entrepriseBase, other.entrepriseBase) && Objects.equals(nom, other.nom);
 	}
 }

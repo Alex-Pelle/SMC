@@ -2,6 +2,7 @@ package controleur;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,7 +22,6 @@ public class CProjet implements ActionListener , ListSelectionListener{
 	
 	private List<EProjet> projets = new LinkedList<>();
 	private Central c;
-	private PState etat;
 	private String nomProjetSelectionne;
 	
 	private enum PState {
@@ -33,7 +33,6 @@ public class CProjet implements ActionListener , ListSelectionListener{
 	
 	public CProjet(Central c) {
 		this.c = c;
-		etat = PState.DEBUT;
 	}
 
 	@Override
@@ -60,7 +59,19 @@ public class CProjet implements ActionListener , ListSelectionListener{
 	}
 	
 	public void addProjet(EProjet p) {
-		this.projets.add(p);
+		if (this.projets.size()>0) {
+			Iterator<EProjet> it = this.projets.iterator();
+			boolean add = true;
+			while(it.hasNext()) {
+				if (it.next().equals(p)) {
+					add=false;
+				}
+			}
+			if (add) this.projets.add(p);
+		} else {
+			this.projets.add(p);
+		}
+		
 	}
 	
 	public void delProjet(String s) {
@@ -83,8 +94,10 @@ public class CProjet implements ActionListener , ListSelectionListener{
 	
 	public void updateList() {
 		DefaultListModel<String> lm = new DefaultListModel<String>();
-		for(EProjet p : this.projets) {
-			lm.addElement(p.toString());
+		if (this.projets.size()>0) {
+			for(EProjet p : this.projets) {
+				lm.addElement(p.toString());
+			}
 		}
 		c.getListProjet().setModel(lm);
 	}

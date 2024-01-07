@@ -29,6 +29,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JFormattedTextField;
 import javax.swing.SpinnerDateModel;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Calendar;
 import javax.swing.SpinnerNumberModel;
 
@@ -89,11 +90,11 @@ public class Facture extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(CInsideProject c) {
+	public static void main(CInsideProject c,Optional<String> facture) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Facture frame = new Facture(c);
+					Facture frame = new Facture(c,facture);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -106,9 +107,9 @@ public class Facture extends JFrame {
 	 * Create the frame.
 	 * @throws ParseException 
 	 */
-	public Facture(CInsideProject c) {
+	public Facture(CInsideProject c, Optional<String> facture) {
 		entreprise = new JTextField();
-		this.ctrl = new CFacture(c, this);
+		this.ctrl = new CFacture(c, this, facture);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 417);
 		contentPane = new JPanel();
@@ -316,11 +317,14 @@ public class Facture extends JFrame {
 		contentPane.add(panel_1, BorderLayout.SOUTH);
 		
 		JButton btnNewButton = new JButton("Annuler");
+		btnNewButton.addActionListener(ctrl);
 		panel_1.add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("Valider");
 		btnNewButton_1.addActionListener(ctrl);
 		panel_1.add(btnNewButton_1);
+		
+		ctrl.editer();
 	}
 
 	public JFormattedTextField getDate() {

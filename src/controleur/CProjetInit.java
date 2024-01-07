@@ -2,6 +2,7 @@ package controleur;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 
@@ -23,7 +24,12 @@ public class CProjetInit implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		JButton b = (JButton) e.getSource();
 		if(b.getText().equals("OK")) {
-			c.addProjet(new EProjet(p.getNomProjet().getText(), p.getEntrepriseBase().getText()));
+			try {
+				c.addProjet(new EProjet(p.getNomProjet().getText(), p.getEntrepriseBase().getText()));
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			c.updateList();
 			p.dispose();
 		}
