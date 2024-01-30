@@ -11,10 +11,10 @@ public class Connexion {
 
 	private Connexion() {
 		String dirProjetJava = System.getProperty("user.dir");
-		System.setProperty("derby.system.home", dirProjetJava + "/TESM");
+		System.setProperty("derby.system.home", dirProjetJava + "/SMC");
 		try {
 			DriverManager.registerDriver(new org.apache.derby.jdbc.EmbeddedDriver());
-			String urlConnexion = "jdbc:derby:TESM;create=true";
+			String urlConnexion = "jdbc:derby:SMC;create=true";
 			connection = DriverManager.getConnection(urlConnexion);
 			System.out.println("Connexion OK");
 		} catch (SQLException e) {

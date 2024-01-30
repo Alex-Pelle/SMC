@@ -7,13 +7,16 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import engine.AbstractFacture;
 import engine.Compte;
 import engine.CustomDate;
 import engine.DateP;
 import engine.EFacture;
+import engine.Facturable;
 import engine.Paiement;
 
-public class DaoFacture implements Dao<EFacture, Object> {
+public class DaoFacture implements Dao<Facturable, Object> {
 
 	private Connexion c;
 	private DaoProjet d;
@@ -53,9 +56,36 @@ public class DaoFacture implements Dao<EFacture, Object> {
 	}
 	
 	@Override
-	public List<EFacture> getAll() throws Exception {
+	public List<Facturable> getAll() throws Exception {
 		try(Statement getAll = c.getConnection().createStatement()){
 			ResultSet resultat = getAll.executeQuery("SELECT * FROM Facture");
+			List<Facturable> sortie = new ArrayList<>();
+			while(resultat.next()) {
+				AbstractFacture facture = new EFacture(
+						this.d.getById(resultat.getInt("Id_Projet")).get(),
+						resultat.getString("Nom"),
+						Compte.valueOf(resultat.getString("Compte")),
+						resultat.getDate("DateF").toString(),
+						resultat.getString("Doit"),
+						resultat.getFloat("Remise"),
+						resultat.getFloat("Rabais"),
+						resultat.getFloat("Ristourne"),
+						resultat.getFloat("Prix"),
+						resultat.getInt("Quantite"),
+						Paiement.valueOf(resultat.getString("Paiement")
+						
+						));
+				sortie.add(facture);
+			}
+			return sortie;
+		}
+	}
+	
+	
+	public List<EFacture> getByProjectDateOrdered(Integer idProject) throws Exception {
+		try(PreparedStatement getAllDateOrdered = c.getConnection().prepareStatement("SELECT * FROM Facture WHERE Id_Projet = ? ORDER BY DateF")){
+			getAllDateOrdered.setInt(1, idProject);
+			ResultSet resultat = getAllDateOrdered.executeQuery();
 			List<EFacture> sortie = new ArrayList<>();
 			while(resultat.next()) {
 				EFacture facture = new EFacture(
@@ -112,7 +142,7 @@ public class DaoFacture implements Dao<EFacture, Object> {
 	@Override
 	public boolean add(EFacture value) throws Exception {
 		try(PreparedStatement add = c.getConnection().prepareStatement(""
-				+ "INSERT INTO Projet ("
+				+ "INSERT INTO Facture ("
 				+ "Id_Projet, "
 				+ "Nom, "
 				+ "Compte, "
@@ -143,7 +173,7 @@ public class DaoFacture implements Dao<EFacture, Object> {
 	@Override
 	public boolean update(EFacture value) throws Exception {
 		try(PreparedStatement add = c.getConnection().prepareStatement(""
-				+ "UPDATE Facture SET ("
+				+ "UPDATE Facture SET "
 				+ "Compte = ? , "
 				+ "DateF = ? , "
 				+ "Doit = ? , "
@@ -215,5 +245,22 @@ public class DaoFacture implements Dao<EFacture, Object> {
 			return sortie;
 		}
 	}
+	
+	public Integer countMois(Integer idProjet) throws Exception {
+		try(PreparedStatement getMois = c.getConnection().prepareStatement(
+				"SELECT MONTHS_BETWEEN(MAX(DateF), MIN(DateF)) AS diff "
+				+"FROM ma_table")) {
+			ResultSet resultat = getMois.executeQuery();
+			Integer sortie = null;
+			if(resultat.next()) {
+				sortie = resultat.getInt("diff");
+			}
+			
+			return sortie;
+			
+		}
+	}
+	
+	
 
 }

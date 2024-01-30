@@ -1,7 +1,9 @@
 package interfesse;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -14,6 +16,9 @@ import java.awt.event.ActionEvent;
 public class ErreurDate extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
+	private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private final int screenWidth = (int) screenSize.getWidth();
+    private final int screenHeight = (int) screenSize.getHeight();
 
 	/**
 	 * Launch the application.
@@ -32,7 +37,7 @@ public class ErreurDate extends JDialog {
 	 * Create the dialog.
 	 */
 	public ErreurDate() {
-		setBounds(100, 100, 186, 119);
+		setBounds(this.screenWidth/6, this.screenHeight/6, 186, 119);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));

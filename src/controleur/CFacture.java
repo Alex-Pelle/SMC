@@ -2,18 +2,25 @@ package controleur;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JSpinner;
 
+import DAO.Connexion;
+import DAO.DaoFacture;
 import engine.Compte;
+import engine.CreateFacture;
+import engine.DateInvalide;
 import engine.DateP;
 import engine.EFacture;
 import engine.Paiement;
 import interfesse.EntrepriseInvalide;
 import interfesse.ErreurDate;
+import interfesse.ErreurDateFactureInvalide;
 import interfesse.ErreurFacture;
 import interfesse.Facture;
 
@@ -43,7 +50,6 @@ public class CFacture implements ActionListener{
 				vue.getEntreprise().setEnabled(false);
 			}
 			vue.getComptes().setSelectedItem(f.getCompteSortie().name());
-			vue.getDate().setText(f.getDate());
 			vue.getQte().setValue(f.getQuantite());
 			vue.getPrix().setValue(f.getPrix());
 			vue.getRemise().setValue(f.getRemise());
@@ -60,12 +66,14 @@ public class CFacture implements ActionListener{
 			if (cb.getName().equals("doit")) {
 				if(cb.getSelectedItem().equals("Autre")) {
 					vue.getEntreprise().setEnabled(true);
+					vue.fillComboBox((String) cb.getSelectedItem());
 				}
 				if(cb.getSelectedItem()!="Autre") {
 					vue.getEntreprise().setEnabled(false);
+					vue.fillComboBox((String) cb.getSelectedItem());
 				}
 			}
-			
+
 		} else if(e.getSource() instanceof JButton) {
 			JButton b = (JButton) e.getSource();
 			if (b.getText().equals("Annuler")) {
@@ -82,33 +90,35 @@ public class CFacture implements ActionListener{
 					ErreurDate.main(null);
 				} 
 				else {
-					String doit ="";
-					if (!vue.getDoit().getSelectedItem().equals("Autre")) {
-						doit = (String) vue.getDoit().getSelectedItem();
-					} else {
-						doit = vue.getEntreprise().getText();
+					try {
+						String doit ="";
+						if (!vue.getDoit().getSelectedItem().equals("Autre")) {
+							doit = (String) vue.getDoit().getSelectedItem();
+						} else {
+							doit = vue.getEntreprise().getText();
+						}
+						List<EFacture> factures = CreateFacture.createFacture(c.getP(), vue.getNomFacture().getText(), Compte.valueOf((String)vue.getComptes().getSelectedItem()), vue.getDate().getText(), doit, (Float)vue.getRemise().getValue(), (Float)vue.getRabais().getValue(), (Float)vue.getRistourne().getValue(), (Float)vue.getPrix().getValue(), (Integer)vue.getQte().getValue(), Paiement.valueOf((String)vue.getPaiements().getSelectedItem()));
+						for(EFacture f : factures) {
+							new DaoFacture(Connexion.getConnexion()).add(f);
+							c.addFacture(f);
+							c.updateList();
+						}
+						vue.dispose();
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+						if (e1 instanceof DateInvalide) {
+							ErreurDateFactureInvalide.main(e1.getMessage());
+						}
+						
 					}
-					c.addFacture(new EFacture(
-							c.getP(),
-							vue.getNomFacture().getText(),
-							Compte.valueOf((String)vue.getComptes().getSelectedItem()),
-							vue.getDate().getText(),
-							doit,
-							(Float)vue.getRemise().getValue(),
-							(Float)vue.getRabais().getValue(),
-							(Float)vue.getRistourne().getValue(),
-							(Float)vue.getPrix().getValue(),
-							(Integer)vue.getQte().getValue(),
-							Paiement.valueOf((String)vue.getPaiements().getSelectedItem())));
-					if (nomFacture.isPresent()) {
-						c.delFacture(nomFacture.get());
-					}
-					c.updateList();
-					vue.dispose();
+
+					
 				}
 			}
-		}
-		
+
+		} 
+
 	}
 
 }

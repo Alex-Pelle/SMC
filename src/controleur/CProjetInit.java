@@ -6,8 +6,14 @@ import java.sql.SQLException;
 
 import javax.swing.JButton;
 
+import DAO.Connexion;
+import DAO.DaoProjet;
+import engine.DateP;
 import engine.EProjet;
 import interfesse.Central;
+import interfesse.EntrepriseInvalide;
+import interfesse.ErreurDate;
+import interfesse.ErreurNomProjet;
 import interfesse.ProjectInit;
 
 public class CProjetInit implements ActionListener{
@@ -24,14 +30,24 @@ public class CProjetInit implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		JButton b = (JButton) e.getSource();
 		if(b.getText().equals("OK")) {
-			try {
-				c.addProjet(new EProjet(p.getNomProjet().getText(), p.getEntrepriseBase().getText()));
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			if (p.getNomProjet().getText().isEmpty()) {
+				ErreurNomProjet.main(null);
+			} else if (p.getEntrepriseBase().getText().isEmpty()) {
+				EntrepriseInvalide.main(null);
+			} else if(!DateP.getLinkedDate(p.getDate().getText()).isDateValide()) {
+				ErreurDate.main(null);
+			} else {
+				try {
+					EProjet projet = new EProjet(p.getNomProjet().getText(), p.getEntrepriseBase().getText(), (Float)p.getCapital().getValue(), (Float)p.getSalaires().getValue(),p.getDate().getText());
+					c.addProjet(projet);
+					c.updateList();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				p.dispose();
 			}
-			c.updateList();
-			p.dispose();
+			
 		}
 		if(b.getText().equals("Annuler")) {
 			p.dispose();

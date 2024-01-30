@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
+import DAO.Connexion;
+import DAO.DaoProjet;
 import engine.EProjet;
 import interfesse.PopupDeleteProject;
 import interfesse.ProjectInit;
@@ -25,9 +27,14 @@ public class CSuppressionProjet implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		JButton b = (JButton) e.getSource();
 		if(b.getText().equals("OK")) {
-			c.delProjet(nomProjetSelectionne);
-			p.dispose();
-			c.updateList();
+			try {
+				c.delProjet(nomProjetSelectionne);
+				p.dispose();
+				c.updateList();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 		if(b.getText().equals("Annuler")) {
 			p.dispose();

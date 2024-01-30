@@ -12,6 +12,8 @@ import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import DAO.Connexion;
+import DAO.DaoProjet;
 import engine.EProjet;
 import interfesse.Central;
 import interfesse.PopupDeleteProject;
@@ -24,22 +26,17 @@ public class CProjet implements ActionListener , ListSelectionListener{
 	private Central c;
 	private String nomProjetSelectionne;
 	
-	private enum PState {
-		DEBUT,
-		NOUVEAU,
-		PROJET_SELECTIONNE,
-		SUPPRIMER;
-	}
 	
-	public CProjet(Central c) {
+	public CProjet(Central c) throws Exception {
 		this.c = c;
+		projets = new DaoProjet(Connexion.getConnexion()).getAll();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		JButton b = (JButton) e.getSource();
 		if(b.getText().equals("Nouveau projet")) {
-			ProjectInit.main(this);
+			ProjectInit.main(this);;
 		}
 		if(b.getText().equals("Supprimer projet") && this.nomProjetSelectionne!=null) {
 			PopupDeleteProject.main(this, nomProjetSelectionne);
@@ -58,7 +55,7 @@ public class CProjet implements ActionListener , ListSelectionListener{
 		
 	}
 	
-	public void addProjet(EProjet p) {
+	public void addProjet(EProjet p) throws Exception {
 		if (this.projets.size()>0) {
 			Iterator<EProjet> it = this.projets.iterator();
 			boolean add = true;
@@ -67,20 +64,20 @@ public class CProjet implements ActionListener , ListSelectionListener{
 					add=false;
 				}
 			}
-			if (add) this.projets.add(p);
+			if (add) {
+				this.projets.add(p);
+				new DaoProjet(Connexion.getConnexion()).add(p);
+			}
 		} else {
 			this.projets.add(p);
+			new DaoProjet(Connexion.getConnexion()).add(p);
 		}
 		
 	}
 	
-	public void delProjet(String s) {
-		for(EProjet p : this.projets) {
-			if(p.toString().equals(s))  {
-				this.projets.remove(p);
-				System.out.println("Projet supprimé avec succès");
-			}
-		}
+	public void delProjet(String s) throws Exception {
+		this.projets.remove(this.getProjet(s));
+		new DaoProjet(Connexion.getConnexion()).delete(this.getProjet(s).getIdProjet());
 	}
 	
 	public EProjet getProjet(String s) {
@@ -92,11 +89,13 @@ public class CProjet implements ActionListener , ListSelectionListener{
 		return null;
 	}
 	
-	public void updateList() {
+	public void updateList() throws Exception {
 		DefaultListModel<String> lm = new DefaultListModel<String>();
-		if (this.projets.size()>0) {
-			for(EProjet p : this.projets) {
+		List<EProjet> list = new DaoProjet(Connexion.getConnexion()).getAll();
+		if (list.size()>0) {
+			for(EProjet p : list) {
 				lm.addElement(p.toString());
+				this.projets.add(p);
 			}
 		}
 		c.getListProjet().setModel(lm);

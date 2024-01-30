@@ -12,9 +12,12 @@ import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import DAO.Connexion;
+import DAO.DaoFacture;
 import engine.EFacture;
 import engine.EProjet;
 import interfesse.Facture;
+import interfesse.JBB;
 import interfesse.PopupDeleteFacture;
 import interfesse.PopupDeleteProject;
 import interfesse.ProjectInit;
@@ -50,7 +53,7 @@ public class CInsideProject implements ActionListener , ListSelectionListener {
 		JButton b = (JButton) e.getSource();
 		if(b.getText().equals("Nouvelle facture")) {
 			Facture.main(this,Optional.ofNullable(null));
-		}
+		} 
 		if(b.getText().equals("Supprimer facture") && this.nomFactureSelectionne!=null) {
 			PopupDeleteFacture.main(this, nomFactureSelectionne);
 		} 
@@ -58,7 +61,12 @@ public class CInsideProject implements ActionListener , ListSelectionListener {
 			Facture.main(this,Optional.ofNullable(this.nomFactureSelectionne));
 		} 
 		if(b.getText().equals("Générer")){
-
+			try {
+				JBB.main(new DaoFacture(Connexion.getConnexion()).getByProjectDateOrdered(p.getIdProjet()));
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 		if(b.getText().equals("Fermer")){
 			vue.dispose();
@@ -66,16 +74,13 @@ public class CInsideProject implements ActionListener , ListSelectionListener {
 	}
 
 	public void addFacture(EFacture f) {
+		System.out.println(f.hashCode());
 		this.p.addFacture(f);
 	}
 
-	public void delFacture(String s) {
-		for(EFacture f : this.p.getFactures()) {
-			if(f.getNom().equals(s))  {
-				this.p.getFactures().remove(f);
-				System.out.println("Projet supprimé avec succès");
-			}
-		}
+	public void delFacture(String s) throws Exception {
+		this.p.removeFacture(this.getFacture(s));
+		
 	}
 
 	public EFacture getFacture(String s) {
@@ -87,18 +92,16 @@ public class CInsideProject implements ActionListener , ListSelectionListener {
 		return null;
 	}
 
-	public void updateList() {
+	public void updateList() throws Exception {
 		DefaultListModel<String> lm = new DefaultListModel<String>();
-		if (this.p.getFactures().size()>0) {
-			for(EFacture f : this.p.getFactures()) {
+		List<EFacture> list = new DaoFacture(Connexion.getConnexion()).getFacturesByProjet(p.getIdProjet());
+		if (list.size()>0) {
+			for(EFacture f : list) {
 				lm.addElement(f.getNom());
+				
 			}
 		}
+		p.setFactures(list);
 		vue.getFactures().setModel(lm);
-
-
 	}
-
-
-
 }

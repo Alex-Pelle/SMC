@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JSplitPane;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -31,6 +32,8 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JRadioButton;
 import java.awt.Color;
+import java.awt.Dimension;
+
 import javax.swing.border.BevelBorder;
 import javax.swing.ListSelectionModel;
 import javax.swing.JFormattedTextField;
@@ -53,7 +56,10 @@ import javax.swing.event.ListSelectionEvent;
 
 public class Central extends JFrame {
 
-	
+	private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private final int screenWidth = (int) screenSize.getWidth();
+    private final int screenHeight = (int) screenSize.getHeight();
+    
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField CA;
@@ -290,10 +296,10 @@ public class Central extends JFrame {
 		
 		}
 	}
-	public Central() {
+	public Central() throws Exception {
 		ctrl = new CProjet(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 907, 570);
+		setBounds(this.screenWidth/6, this.screenHeight/6, 907, 570);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -1081,7 +1087,12 @@ public class Central extends JFrame {
 		listProjet = new JList<String>();
 		listProjet.addListSelectionListener(ctrl);
 		panel_34.add(listProjet, "name_804636888798500");
-		ctrl.updateList();
+		try {
+			ctrl.updateList();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		
 		JLabel lblNewLabel_12 = new JLabel("M Calculator");

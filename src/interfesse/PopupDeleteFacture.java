@@ -1,7 +1,9 @@
 package interfesse;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -19,6 +21,9 @@ public class PopupDeleteFacture extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private CSuppressionFacture ctrl;
+	private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private final int screenWidth = (int) screenSize.getWidth();
+    private final int screenHeight = (int) screenSize.getHeight();
 
 	/**
 	 * Launch the application.
@@ -36,7 +41,7 @@ public class PopupDeleteFacture extends JDialog {
 	
 	public PopupDeleteFacture(CInsideProject c, String s) {
 		this.ctrl = new CSuppressionFacture(this, c, s);
-		setBounds(100, 100, 350, 119);
+		setBounds(this.screenWidth/6, this.screenHeight/6, 350, 119);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));

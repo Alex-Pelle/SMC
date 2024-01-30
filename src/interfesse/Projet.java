@@ -19,6 +19,8 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Toolkit;
+
 import javax.swing.JList;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
@@ -31,6 +33,9 @@ public class Projet extends JFrame {
 	private JPanel contentPane;
 	private JList<String> factures;
 	private CInsideProject ctrl;
+	private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private final int screenWidth = (int) screenSize.getWidth();
+    private final int screenHeight = (int) screenSize.getHeight();
 
 	/**
 	 * Launch the application.
@@ -50,11 +55,12 @@ public class Projet extends JFrame {
 
 	/**
 	 * Create the frame.
+	 * @throws Exception 
 	 */
-	public Projet(EProjet p) {
+	public Projet(EProjet p) throws Exception {
 		this.ctrl = new CInsideProject(p, this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(this.screenWidth/6, this.screenHeight/6, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -87,6 +93,7 @@ public class Projet extends JFrame {
 		panel.add(btnNewButton_1, gbc_btnNewButton_1);
 		
 		JButton btnNewButton_2 = new JButton("Supprimer facture");
+		btnNewButton_2.addActionListener(ctrl);
 		GridBagConstraints gbc_btnNewButton_2 = new GridBagConstraints();
 		gbc_btnNewButton_2.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnNewButton_2.insets = new Insets(0, 0, 5, 0);
@@ -94,20 +101,8 @@ public class Projet extends JFrame {
 		gbc_btnNewButton_2.gridy = 2;
 		panel.add(btnNewButton_2, gbc_btnNewButton_2);
 		
-		JButton btnNewButton_4 = new JButton("Editer facture");
-		btnNewButton_4.addActionListener(ctrl);
-		GridBagConstraints gbc_btnNewButton_4 = new GridBagConstraints();
-		gbc_btnNewButton_4.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnNewButton_4.insets = new Insets(0, 0, 5, 0);
-		gbc_btnNewButton_4.gridx = 0;
-		gbc_btnNewButton_4.gridy = 3;
-		panel.add(btnNewButton_4, gbc_btnNewButton_4);
-		
 		JButton btnNewButton = new JButton("Générer");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
+		btnNewButton.addActionListener(ctrl);
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
 		gbc_btnNewButton.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnNewButton.insets = new Insets(0, 0, 5, 0);

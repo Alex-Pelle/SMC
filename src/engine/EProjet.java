@@ -3,6 +3,7 @@ package engine;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 import DAO.Connexion;
@@ -13,20 +14,19 @@ public class EProjet {
 	private Integer idProjet;
 	private String nom;
 	private String entrepriseBase;
-	private LinkedList<EFacture> factures = new LinkedList<>();
+	private Float salaire;
+	private Float captial;
+	private String datePaiementSalaire;
+	private List<EFacture> factures = new LinkedList<>();
 	
-	public EProjet(String nom, String entrepriseBase) throws SQLException {
-		this(new DaoProjet(Connexion.getConnexion()).getLastId(),nom,entrepriseBase);
-	}
 	
-	private EProjet(Integer id,String nom, String entrepriseBase) {
+	
+	public EProjet(String nom, String entrepriseBase , Float salaire , Float captial , String datePaiementSalaire) {
 		this.nom = nom;
 		this.entrepriseBase = entrepriseBase;
-		if (id==null) {
-			this.idProjet=0;
-		} else {
-			this.idProjet = id+1;
-		}
+		this.salaire=salaire;
+		this.captial=captial;
+		this.datePaiementSalaire=datePaiementSalaire;
 	}
 
 	public String getNom() {
@@ -37,16 +37,11 @@ public class EProjet {
 		return entrepriseBase;
 	}
 
-	public LinkedList<EFacture> getFactures() {
+	public List<EFacture> getFactures() {
 		return factures;
 	}
 	
 	public void addFacture(EFacture facture) {
-		if(facture.getDoit().equals(this.entrepriseBase)) {
-			setPaiementClient(facture);
-		} else {
-			setPaiementFournisseur(facture);
-		}
 		this.factures.add(facture);
 	}
 	
@@ -59,31 +54,7 @@ public class EProjet {
 		return nom;
 	}
 
-	private void setPaiementFournisseur(EFacture facture) {
-		switch(facture.getPaiment()) {
-		case A_30J : 
-			facture.setCompteEntree(Compte.FOURNISSEUR);
-			break;
-		case AU_COMPTANT_PAR_CHEQUE : 
-			facture.setCompteEntree(Compte.BANQUE);
-			break;
-		default:
-			break;
-		}
-	}
-
-	private void setPaiementClient(EFacture facture) {
-		switch(facture.getPaiment()) {
-		case A_30J : 
-			facture.setCompteEntree(Compte.CLIENT);
-			break;
-		case AU_COMPTANT_PAR_CHEQUE : 
-			facture.setCompteEntree(Compte.BANQUE);
-			break;
-		default:
-			break;
-		}
-	}
+	
 
 	public Integer getIdProjet() {
 		return idProjet;
@@ -108,5 +79,21 @@ public class EProjet {
 			return false;
 		EProjet other = (EProjet) obj;
 		return Objects.equals(entrepriseBase, other.entrepriseBase) && Objects.equals(nom, other.nom);
+	}
+
+	public void setFactures(List<EFacture> factures) {
+		this.factures = factures;
+	}
+
+	public Float getSalaire() {
+		return salaire;
+	}
+
+	public Float getCaptial() {
+		return captial;
+	}
+
+	public String getDatePaiementSalaire() {
+		return datePaiementSalaire;
 	}
 }

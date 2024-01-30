@@ -7,6 +7,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import engine.CustomDate;
+import engine.DateP;
 import engine.EFacture;
 import engine.EProjet;
 
@@ -21,9 +24,12 @@ public class DaoProjet implements Dao<EProjet,Integer>{
 
 	public static void createTable(Connexion connexion) throws SQLException {
 		String createTableSql = "CREATE TABLE Projet("
-				+ "   Id_Projet INT, "
+				+ "   Id_Projet INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
 				+ "   Nom VARCHAR(50), "
 				+ "   Entreprise_Base VARCHAR(50), "
+				+ "	  Captial FLOAT, "
+				+ "	  Salaire FLOAT, "
+				+ "	  DateSalaire DATE, "
 				+ "   PRIMARY KEY(Id_Projet)) ";
 
 		try (Statement createTable = connexion.getConnection().createStatement()) {
@@ -47,7 +53,10 @@ public class DaoProjet implements Dao<EProjet,Integer>{
 			while(resultat.next()) {
 				EProjet projet = new EProjet(
 						resultat.getString("Nom"),
-						resultat.getString("Entreprise_Base")
+						resultat.getString("Entreprise_Base"), 
+						resultat.getFloat("Captial"), 
+						resultat.getFloat("Salaire"), 
+						resultat.getDate("DateSalaire").toString()
 						);
 				projet.setIdProjet(resultat.getInt("Id_Projet"));
 				sortie.add(projet);
@@ -60,7 +69,7 @@ public class DaoProjet implements Dao<EProjet,Integer>{
 	public Optional<EProjet> getById(Integer... id) throws Exception {
 		try(PreparedStatement getById = c.getConnection().prepareStatement(
 				"SELECT * "
-						+ "FROM Projet"
+						+ "FROM Projet "
 						+ "WHERE Id_Projet = ?")){
 			getById.setInt(1, id[0]);
 			ResultSet resultat = getById.executeQuery();
@@ -68,7 +77,10 @@ public class DaoProjet implements Dao<EProjet,Integer>{
 			if(resultat.next()) {
 				projet = new EProjet(
 						resultat.getString("Nom"),
-						resultat.getString("Entreprise_Base")
+						resultat.getString("Entreprise_Base"), 
+						resultat.getFloat("Captial"), 
+						resultat.getFloat("Salaire"), 
+						resultat.getDate("DateSalaire").toString()
 						);
 				projet.setIdProjet(resultat.getInt("Id_Projet"));
 			}
@@ -79,12 +91,16 @@ public class DaoProjet implements Dao<EProjet,Integer>{
 	@Override
 	public boolean add(EProjet value) throws Exception {
 		try(PreparedStatement add = c.getConnection().prepareStatement(""
-				+ "INSERT INTO Projet (Id_Projet,Nom,Entreprise_Base)"
-				+ "values (?,?,?)")){
-			add.setInt(1, value.getIdProjet());
-			add.setString(2, value.getNom());
-			add.setString(3, value.getEntrepriseBase());
-			return add.execute();
+				+ "INSERT INTO Projet (Nom,Entreprise_Base,Captial,Salaire,DateSalaire)"
+				+ "values (?,?,?,?,?)")){
+			add.setString(1, value.getNom());
+			add.setString(2, value.getEntrepriseBase());
+			add.setFloat(3, value.getCaptial());
+			add.setFloat(4, value.getSalaire());
+			add.setTimestamp(5, new CustomDate(DateP.getLinkedDate(value.getDatePaiementSalaire()).getAnnee(),DateP.getLinkedDate(value.getDatePaiementSalaire()).getMois(),DateP.getLinkedDate(value.getDatePaiementSalaire()).getJour()).toSQL());
+			boolean execute = add.execute();
+			value.setIdProjet(getLastId());
+			return execute;
 		}
 	}
 
@@ -93,11 +109,17 @@ public class DaoProjet implements Dao<EProjet,Integer>{
 		try(PreparedStatement update = c.getConnection().prepareStatement(
 				"UPDATE Projet SET "
 						+ "Nom = ? ,"
-						+"Entreprise_Base = ? "
+						+"Entreprise_Base = ? ,"
+						+ "Captial = ? ,"
+						+ "Salaire = ? ,"
+						+ "DateSalaire = ? "
 						+"WHERE Id_Projet = ?")){
 			update.setString(1, value.getNom());
 			update.setString(2, value.getEntrepriseBase());
-			update.setInt(3, value.getIdProjet());
+			update.setFloat(3, value.getCaptial());
+			update.setFloat(4, value.getSalaire());
+			update.setTimestamp(5, new CustomDate(DateP.getLinkedDate(value.getDatePaiementSalaire()).getAnnee(),DateP.getLinkedDate(value.getDatePaiementSalaire()).getMois(),DateP.getLinkedDate(value.getDatePaiementSalaire()).getJour()).toSQL());
+			update.setInt(6, value.getIdProjet());
 			return update.execute();
 		}
 	}

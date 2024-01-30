@@ -9,10 +9,13 @@ import javax.swing.text.MaskFormatter;
 
 import controleur.CFacture;
 import controleur.CInsideProject;
+import engine.Classe;
 import engine.Compte;
 import engine.Paiement;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.GridLayout;
@@ -21,6 +24,8 @@ import javax.swing.JComboBox;
 import java.awt.GridBagConstraints;
 import javax.swing.JTextField;
 import java.awt.Insets;
+import java.awt.Toolkit;
+
 import javax.swing.JSpinner;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -41,6 +46,10 @@ public class Facture extends JFrame {
 	private JFormattedTextField date;
 	private JSpinner qte;
 	private JSpinner prix;
+	private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private final int screenWidth = (int) screenSize.getWidth();
+    private final int screenHeight = (int) screenSize.getHeight();
+    
 	public JSpinner getQte() {
 		return qte;
 	}
@@ -109,9 +118,10 @@ public class Facture extends JFrame {
 	 */
 	public Facture(CInsideProject c, Optional<String> facture) {
 		entreprise = new JTextField();
+		comptes = new JComboBox<String>();
 		this.ctrl = new CFacture(c, this, facture);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 417);
+		setBounds(this.screenWidth/6, this.screenHeight/6, 450, 417);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -167,7 +177,6 @@ public class Facture extends JFrame {
 		doit = new JComboBox<String>();
 		panel_2.add(doit);
 		doit.setName("doit");
-		System.out.println(doit.getName());
 		doit.addActionListener(ctrl);
 		doit.addItem(c.getP().getEntrepriseBase());
 		doit.addItem("Autre");
@@ -183,16 +192,14 @@ public class Facture extends JFrame {
 		gbc_lblNewLabel_9.gridy = 3;
 		panel.add(lblNewLabel_9, gbc_lblNewLabel_9);
 		
-		comptes = new JComboBox<String>();
+		
 		GridBagConstraints gbc_comptes = new GridBagConstraints();
 		gbc_comptes.insets = new Insets(0, 0, 5, 0);
 		gbc_comptes.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comptes.gridx = 1;
 		gbc_comptes.gridy = 3;
 		panel.add(comptes, gbc_comptes);
-		for(Compte cpt : Compte.values()) {
-			comptes.addItem(cpt.name());
-		}
+		
 		
 		try {
 			JLabel lblNewLabel_1 = new JLabel("Date");
@@ -341,6 +348,27 @@ public class Facture extends JFrame {
 
 	public void setEntreprise(JTextField entreprise) {
 		this.entreprise = entreprise;
+	}
+	
+	public void fillComboBox(String selectedValue) {
+		if (comptes!=null) {
+			comptes.removeAllItems();
+		}
+		
+		if (selectedValue=="Autre") {
+			for(Compte cpt : Compte.values()) {
+				if(cpt.getClasse().equals(Classe.CLASSE_7)) {
+					comptes.addItem(cpt.name());
+				}
+			}
+		} else {
+			for(Compte cpt : Compte.values()) {
+				if(!cpt.getClasse().equals(Classe.CLASSE_7) && !Compte.getNonSelectionnable().contains(cpt)) {
+					comptes.addItem(cpt.name());
+				}
+			}
+		}
+		
 	}
 
 }
