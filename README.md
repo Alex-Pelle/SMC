@@ -1,1 +1,1 @@
-# SuperMarquieCalculator
+# SMC
